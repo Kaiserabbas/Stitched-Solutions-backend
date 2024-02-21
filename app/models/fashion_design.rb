@@ -1,0 +1,2 @@
+class FashionDesign < ApplicationRecord
+end
