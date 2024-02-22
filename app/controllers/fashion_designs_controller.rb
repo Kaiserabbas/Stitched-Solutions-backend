@@ -1,4 +1,6 @@
 class FashionDesignsController < ApplicationController
+  before_action :authorize_request!
+  before_action :authorize_admin!, only: [:create, :update, :destroy]
   before_action :set_fashion_design, only: %i[ show update destroy ]
 
   # GET /fashion_designs
@@ -43,7 +45,12 @@ class FashionDesignsController < ApplicationController
     def set_fashion_design
       @fashion_design = FashionDesign.find(params[:id])
     end
-
+    # Use callbacks to share common setup or constraints between actions.
+    def authorize_admin!
+      unless current_user&.admin?
+        render json: { error: 'Unauthorized' }, status: :unauthorized
+      end
+    end
     # Only allow a list of trusted parameters through.
     def fashion_design_params
       params.require(:fashion_design).permit(:title, :price, :description, :image_url)
